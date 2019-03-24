@@ -12,6 +12,10 @@ from generate import *
 from model import *
 from utils import *
 
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 # Parse command line arguments
 argparser = argparse.ArgumentParser()
 argparser.add_argument('filename', type=str)

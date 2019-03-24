@@ -49,8 +49,17 @@ if __name__ == '__main__':
     argparser.add_argument('-l', '--predict_len', type=int, default=100)
     argparser.add_argument('-t', '--temperature', type=float, default=0.8)
     argparser.add_argument('--cuda', action='store_true')
+    argparser.add_argument('-n', '--num', type=int, default=100)
+    argparser.add_argument('-o', '--output', type=str, default='')
     args = argparser.parse_args()
 
-    decoder = torch.load(args.filename)
-    del args.filename
-    print(generate(decoder, **vars(args)))
+    args = vars(args)
+    decoder = torch.load(args['filename'])
+    if args['output']:
+        for i in range(args['num']):
+            pred = generate(decoder, args['prime_str'], args['predict_len'], args['temperature'], args['cuda'])
+            with open(args['output'], 'w') as f:
+                f.write(pred)
+    else:
+        pred = generate(decoder, args['prime_str'], args['predict_len'], args['temperature'], args['cuda'])
+        print(pred)
