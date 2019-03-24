@@ -6,8 +6,6 @@ from torch.autograd import Variable
 import argparse
 import os
 
-from tqdm import tqdm
-
 from generate import *
 from model import *
 from utils import *
@@ -94,7 +92,7 @@ loss_avg = 0
 
 try:
     print("Training for %d epochs..." % args.n_epochs)
-    for epoch in tqdm(range(1, args.n_epochs + 1)):
+    for epoch in range(1, args.n_epochs + 1):
         loss = train(*random_training_set(args.chunk_len, args.batch_size))
         loss_avg += loss
 
