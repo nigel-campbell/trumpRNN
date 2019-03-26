@@ -54,7 +54,12 @@ if __name__ == '__main__':
     args = argparser.parse_args()
 
     args = vars(args)
-    decoder = torch.load(args['filename'])
+    decoder = None
+    if not args['cuda']:
+        decoder = torch.load(args['filename'], map_location='cpu')
+    else:
+        print("Using CUDA")
+        decoder = torch.load(args['filename'])
     if args['output']:
         for i in range(args['num']):
             pred = generate(decoder, args['prime_str'], args['predict_len'], args['temperature'], args['cuda'])
