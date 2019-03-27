@@ -10,9 +10,12 @@ from generate import *
 from model import *
 from utils import *
 
-# import sys
-# reload(sys)
-# sys.setdefaultencoding("utf-8")
+import sys
+reload(sys)
+
+if sys.version_info < (3, 0):
+    print("Using Python 2")
+    sys.setdefaultencoding("utf-8")
 
 # Parse command line arguments
 argparser = argparse.ArgumentParser()
@@ -67,12 +70,14 @@ def train(inp, target):
 
     return loss.item() / args.chunk_len
 
-def save():
-    #save_filename = os.path.splitext(os.path.basename(args.filename))[0] + '.pt'
-    save_filename = args.n_epochs + '_' + args.hidden_size + '_' + args.learning_rate + '_' + args.chunk_len + '_' + args.batch_size + '.pt'
 
-    torch.save(decoder, save_filename)
-    print('Saved as %s' % save_filename)
+def save():
+    dataset = os.path.splitext(os.path.basename(args.filename))[0]
+    params  = "{}_{}_{}_{}_{}".format(args.n_epochs, args.hidden_size, args.learning_rate, args.chunk_len, args.batch_size)
+    directory = "models"
+    filename = "{}/{}_{}.pt".format(directory, params, dataset)
+    torch.save(decoder, filename)
+    print('Saved as %s' % filename)
 
 # Initialize models and start training
 
