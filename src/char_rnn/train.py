@@ -10,9 +10,9 @@ from generate import *
 from model import *
 from utils import *
 
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
+# import sys
+# reload(sys)
+# sys.setdefaultencoding("utf-8")
 
 # Parse command line arguments
 argparser = argparse.ArgumentParser()
@@ -25,6 +25,7 @@ argparser.add_argument('--n_layers', type=int, default=2)
 argparser.add_argument('--learning_rate', type=float, default=0.01)
 argparser.add_argument('--chunk_len', type=int, default=200)
 argparser.add_argument('--batch_size', type=int, default=100)
+argparser.add_argument('--dropout', type=float, default=0.05)
 argparser.add_argument('--shuffle', action='store_true')
 argparser.add_argument('--cuda', action='store_true')
 args = argparser.parse_args()
@@ -67,7 +68,9 @@ def train(inp, target):
     return loss.item() / args.chunk_len
 
 def save():
-    save_filename = os.path.splitext(os.path.basename(args.filename))[0] + '.pt'
+    #save_filename = os.path.splitext(os.path.basename(args.filename))[0] + '.pt'
+    save_filename = args.n_epochs + '_' + args.hidden_size + '_' + args.learning_rate + '_' + args.chunk_len + '_' + args.batch_size + '.pt'
+
     torch.save(decoder, save_filename)
     print('Saved as %s' % save_filename)
 
@@ -79,6 +82,7 @@ decoder = CharRNN(
     n_characters,
     model=args.model,
     n_layers=args.n_layers,
+    dropout=args.dropout
 )
 decoder_optimizer = torch.optim.Adam(decoder.parameters(), lr=args.learning_rate)
 criterion = nn.CrossEntropyLoss()

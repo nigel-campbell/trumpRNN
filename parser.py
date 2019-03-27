@@ -14,21 +14,3 @@ for txt in data:
 with open('fulldata.txt', 'w') as f:
 	for txt in data:
 		f.writelines(txt)
-
-
-
-# 		with open('2020.txt', 'w') as g:
-# 			for line in f:
-# 				http_index = line.find('http')
-# 				if http_index != -1:
-# 					line = line[:http_index - 1] + '\n'
-# 				g.write(line)
-
-# with open('2020.txt', 'r+') as f:
-# 	for line in f:
-# 		print(line)
-# 		http_index = line.find('http')
-# 		if http_index != -1:
-# 			line = line[:http_index - 1] + '\n'
-# 		f.write(line)
-# 	
