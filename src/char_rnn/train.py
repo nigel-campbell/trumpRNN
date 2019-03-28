@@ -69,7 +69,9 @@ def train(inp, target):
 
 def save():
     #save_filename = os.path.splitext(os.path.basename(args.filename))[0] + '.pt'
-    save_filename = args.n_epochs + '_' + args.hidden_size + '_' + args.learning_rate + '_' + args.chunk_len + '_' + args.batch_size + '.pt'
+    save_filename = str(args.n_epochs) + '_' + str(args.hidden_size) + '_' + \
+                    str(args.learning_rate) + '_' + str(args.chunk_len) + '_' + \
+                    str(args.batch_size) + '.pt'
 
     torch.save(decoder, save_filename)
     print('Saved as %s' % save_filename)
