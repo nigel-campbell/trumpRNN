@@ -61,9 +61,9 @@ if __name__ == '__main__':
         print("Using CUDA")
         decoder = torch.load(args['filename'])
     if args['output']:
-        for i in range(args['num']):
-            pred = generate(decoder, args['prime_str'], args['predict_len'], args['temperature'], args['cuda'])
-            with open(args['output'], 'w') as f:
+        with open(args['output'], 'w') as f:
+            for i in range(args['num']):
+                pred = generate(decoder, args['prime_str'], args['predict_len'], args['temperature'], args['cuda'])
                 f.write(pred)
     else:
         pred = generate(decoder, args['prime_str'], args['predict_len'], args['temperature'], args['cuda'])

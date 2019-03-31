@@ -70,7 +70,6 @@ def train(inp, target):
 
     return loss.item() / args.chunk_len
 
-
 def save():
     dataset = os.path.splitext(os.path.basename(args.filename))[0]
     params  = "{}_{}_{}_{}_{}".format(args.n_epochs, args.hidden_size, args.learning_rate, args.chunk_len, args.batch_size)
