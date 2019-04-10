@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en"><head>  
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <title>Deep Learning Class Project
+  | Georgia Tech | Spring 2019: CS 7643</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+<!-- Le styles -->  
+  <link href="css/bootstrap.css" rel="stylesheet">
+<style>
+body {
+padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+.vis {
+color: #3366CC;
+}
+.data {
+color: #FF9900;
+}
+</style>
+  
+<link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+<div class="page-header">
+
+<!-- Title and Name --> 
+<h1>TrumpRNN</h1> 
+<span style="font-size: 20px; line-height: 1.5em;"><strong>Bryan Baek, Nigel Campbell</strong></span><br>
+<span style="font-size: 18px; line-height: 1.5em;">Spring 2019 CS 7643 Deep Learning: Class Project</span><br>
+<span style="font-size: 18px; line-height: 1.5em;">Georgia Tech</span>
+<hr>
+
+<!-- Goal -->
+<h2>Abstract</h2>
+
+We wanted to use deep learning to see if we can mimic someone's tone. In this paper, we try to mimic Trump from his tweets from 2013-2019 via char-level and word-level RNN. Compared to a n-gram, the output is qualitatively poor. 
+<br><br>
+<!-- figure -->
+<!-- <h2>Teaser figure</h2>
+A figure that conveys the main idea behind the project or the main application being addressed. (This one is from <a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks">AlexNet</a>.)
+<br><br> -->
+<!-- Main Illustrative Figure --> 
+<!-- <div style="text-align: center;">
+<img style="height: 200px;" alt="" src="images/alexnet.png">
+</div> -->
+<br><br>
+<!-- Introduction -->
+<h2>Introduction / Background / Motivation</h2>
+<h4>What did you try to do? What problem did you try to solve? Articulate your objectives using absolutely no jargon.</h4>
+We want to use deep learning to “mimic” someone’s diction. Ideally, we want to solve the problem of generating a text from our model that would be almost indistinguishable from the actual speaker. 
+
+Interestingly, our current president of the United States Donald J. Trump is an ideal candidate to apply this approach. Not only does he have a unique, colloquial tone that is both iconic for a person of his position, but also there is a great wealth of data thanks to his frequent tweeting. 
+
+
+<h4>How is it done today, and what are the limits of current practice?</h4>
+Before deep learning, text generation was done using probabilistic Markov Chain Monte Carlo and bag of words model. These models, however, generate the next word in the sequence based on the current state; since they do not dive deep into the sequence history, context is difficult to capture in the output text. 
+
+Since then, there have been attempts to use deep learning to generate similar text output. Karparthy used a RNN structure to mimic a Shakespeare text, Wikipedia article, a C code, and even a LaTex file (http://karpathy.github.io/2015/05/21/rnn-effectiveness/). However, while they “look” like the original text, they do not sound like the author of the original document. A human language model is more complex to mimic than, per se, a code because context in human language is unbounded. 
+
+<h4>Who cares? If you are successful, what difference will it make?</h4>
+This is interesting for the following reasons. First, it not only reveals how a machine learn to speak but also provokes thinking about how we humans grasp the concept of language and speak. Second, from an user’s point of view, this presents an interesting perspective of how the user sounds. Finally, it metaphysically touches on the concept of "immortality". Currently, there exists voice question-and-answer system like Alexa or Watson that can reasonably carry out a conversation. However, they lack in an specific tone that usually defines a person. By combining human-level intellect with a specific person's tone, we could reasonably mimic the person, and this idea would be similar to "deep-copying" someone's mental features. 
+
+<br><br>
+<!-- Approach -->
+<h2>Approach</h2>
+<h4>What did you do exactly? How did you solve the problem? Why did you think it would be successful? Is anything new in your approach?</h4>
+
+We developed a char-level and word-level RNN that consist of LSTM or GRU layers as the basis of the model. We believe adding recurrence to the model via RNN will provide contextual information. Instead of generating the next token in a sequence based only on the previous token, recurrent models provide history s.t. training can pick up on larger patterns in the training data. 
+
+The architecture used in the text generation model is a 3 layer GRU layers followed by a single densely connected output layer with a softmax activation function to provide a one-hot token encoding vector as an output. 
+
+Using char-level and word levle rnn to simulate the original text has been done before (e.g. Karparthy). In his approach, while it looks similar, content, in its core, is not comprehensible and poor in quality. In our project, we are trying to find ways to improve in this direction. 
+
+<br><br>
+<!-- Experiment Plan -->
+<h2>Experiments Plan</h2>
+<h4>What datasets are you using and what experiments will you carry out?</h4>
+We collected Trump’s tweets from 2013 to 2019. We excluded retweets so that data consists of tweets made by his account only. However, this doesn’t exclude the fact that someone else like his staffers may have used his account to tweet on his behalf. 
+
+
+<h4>How do you plan to measure success? </h4>
+As with all text generation model, it is difficult to measure the success of a model. Currently, we used the trained model to generate text output and manually check how “good” it is. We have to scrape by hand and cherry pick results for sentences that sound interesting. 
+
+We also ran a n-gram (not deep-learning) approach as a baseline to see if deep learning provides an improvement.
+<br><br>
+
+<!-- Experiment Plan -->
+<h2>Current Status</h2>
+<h4>Describe the list of tasks involved in your project per team member, and note what has already been accomplished and what is left to do.</h4>
+We collected all the data (25k tweets, or 3MB). For pre-processing, we removed all hyperlinks in the tweets. We coded up the RNN architecture using PyTorch, and actually trained the model with hyperparamter tuning. We each did about equal portion of work. Bryan mainly worked wiht the char-level rnn, and Nigel worked with the word-level rnn and n-gram. Overall, after hyper-parameter tuning on the model (number of layers, LSTM vs. GRU, epochs, learning rate), we came up with 300+ models and generated 50 tweets per each model. We manually skimmed through the outputs to evaluate the model and highlight any interesting bits and pieces.
+<br><br>
+
+<!-- Help -->
+<h2>Help</h2>
+First, it’s hard to evaluate the goodness of the model because it’s not exactly a supervised learning. Accuracy doesn’t really apply in our problem domain. We have to manually read the generated output. 
+
+Also. for a given output, we had to cherry pick interesting bits and pieces because most of the output was gibberish. But this seems to be in common with other text generation model too. 
+
+Overall, it would be nice to improve the model. We looked at other models like Transformer but they seem to be used in a supervised learning context (e.g. English-German translation). 
+<br><br>
+
+<!-- Main Results Figure --> 
+<!-- <div style="text-align: center;">
+<img style="height: 300px;" alt="" src="images/results.png">
+</div>
+<br><br> -->
+
+  <hr>
+  <footer> 
+  <p>© Bryan Baek, Nigel Campbell</p>
+  </footer>
+</div>
+</div>
+
+<br><br>
+
+</body></html>

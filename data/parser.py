@@ -13,7 +13,8 @@ for txt in data:
 		elif http_index != -1:
 			txt[i] = line[:http_index - 1]
 
-repeated = 3
+#pointless
+repeated = 1
 
 with open('fulldata.txt', 'w') as f:
 	for _ in range(repeated):
