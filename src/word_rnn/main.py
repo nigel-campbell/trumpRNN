@@ -6,6 +6,7 @@ import os
 import torch
 import torch.nn as nn
 import torch.onnx
+import csv
 
 import data
 import model
@@ -188,6 +189,7 @@ def export_onnx(path, batch_size, seq_len):
 # Loop over epochs.
 lr = args.lr
 best_val_loss = None
+loss_history = []
 
 # At any point you can hit Ctrl + C to break out of training early.
 try:
@@ -195,6 +197,7 @@ try:
         epoch_start_time = time.time()
         train()
         val_loss = evaluate(val_data)
+        loss_history.append(val_loss)
         print('-' * 89)
         print('| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f} | '
                 'valid ppl {:8.2f}'.format(epoch, (time.time() - epoch_start_time),
@@ -218,6 +221,12 @@ with open(args.save, 'rb') as f:
     # after load the rnn params are not a continuous chunk of memory
     # this makes them a continuous chunk, and will speed up forward pass
     model.rnn.flatten_parameters()
+
+loss_file = args.save.replace('.pt', '.loss.csv')
+with open(loss_file, 'wb') as f:
+    writer = csv.writer(f)
+    for loss in loss_history:
+        writer.writerow([loss])
 
 # Run on test data.
 test_loss = evaluate(test_data)
