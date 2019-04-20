@@ -27,7 +27,7 @@ import re
 import pickle
 import argparse
 
-from rnn import *
+from model import *
 
 parser = argparse.ArgumentParser(description='PyTorch char-rnn')
 parser.add_argument('--text', type=str)
@@ -39,7 +39,7 @@ args = parser.parse_args()
 debug = args.debug
 
 with open(args.charfile, 'rb') as f:
-    chars = pickle.load(f)
+    chars = pickle.loads(f)
 
 chars = sorted(list(set(chars)))
 chars_len = len(chars)
