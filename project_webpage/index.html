@@ -30,7 +30,7 @@ color: #FF9900;
 <div class="page-header">
 
 <!-- Title and Name --> 
-<h1>TrumpRNN</h1> 
+<h1>TrumpRNN: Look-Ahead, Multi-Loss Generative Language Models </h1> 
 <span style="font-size: 20px; line-height: 1.5em;"><strong>Bryan Baek, Nigel Campbell</strong></span><br>
 <span style="font-size: 18px; line-height: 1.5em;">Spring 2019 CS 7643 Deep Learning: Class Project</span><br>
 <span style="font-size: 18px; line-height: 1.5em;">Georgia Tech</span>
@@ -42,90 +42,64 @@ color: #FF9900;
 We wanted to use deep learning to see if we can mimic someone's tone. In this paper, we try to mimic Trump from his tweets from 2013-2019 via char-level and word-level RNN. Compared to a n-gram, the output is qualitatively poor. 
 <br><br>
 <!-- figure -->
-<!-- <h2>Teaser figure</h2>
+<h2>Teaser figure</h2>
 A figure that conveys the main idea behind the project or the main application being addressed. (This one is from <a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks">AlexNet</a>.)
-<br><br> -->
+<br><br>
 <!-- Main Illustrative Figure --> 
-<!-- <div style="text-align: center;">
-<img style="height: 200px;" alt="" src="images/alexnet.png">
-</div> -->
+<div style="text-align: center;">
+<img style="height: 200px;" alt="" src="images/trumpTweet.png">
+</div>
 <br><br>
 <!-- Introduction -->
 <h2>Introduction / Background / Motivation</h2>
-<h4>What did you try to do? What problem did you try to solve? Articulate your objectives using absolutely no jargon.</h4>
-We want to use deep learning to “mimic” someone’s diction. Ideally, we want to solve the problem of generating a text from our model that would be almost indistinguishable from the actual speaker. 
+Recurrent neural networks have been used successfully across a variety of applications ranging from image captioning, machine translation and text generation. In the realm of probabilistic classification, language modelling describes the problem of computing the probability of a sequence of character or word tokens given a discrete vocabulary. This problem has applications across machine translation, speech recognition, summarization and dialogue systems.
+ 
+Before deep learning, text generation was done using probabilistic Markov Chain Monte Carlo and bag of words model in closed vocabulary settings. However, some of the limits with respect involve maintaining contextual information for long sequences of generated text as well as keeping word dependencies such that generated text remains coherent.
 
-Interestingly, our current president of the United States Donald J. Trump is an ideal candidate to apply this approach. Not only does he have a unique, colloquial tone that is both iconic for a person of his position, but also there is a great wealth of data thanks to his frequent tweeting. 
+There have been attempts to use deep learning to generate similar text output. Karparthy used a RNN structure to mimic corpus like Shakespeare text, Wikipedia article, a C code, and even a LaTex file [1]. However, while they “look” like the original text, they do not sound like the author of the original document. In “Applying Artistic Style Transfer to Natural Language,” [2] Edirisooriya and Tenney embed IDs and apply RNNs of gated recurrent unit (GRU) to identify authors of a given text based on style. They try to separate the loss function in terms of content and style. However, the outcome of their experiments showed limited results, and this required parallel sets of text data. In Feb 2019, researchers from OpenAI trained a large-scale unsupervised language model with 1.5 billion parameters trained on 40GB of Internet text. that creates coherent paragraphs of text based on a human-input text. [3] While the generated text was remarkably relevant to the input text in terms of content, it lacks similarity in style. 
 
-
-<h4>How is it done today, and what are the limits of current practice?</h4>
-Before deep learning, text generation was done using probabilistic Markov Chain Monte Carlo and bag of words model. These models, however, generate the next word in the sequence based on the current state; since they do not dive deep into the sequence history, context is difficult to capture in the output text. 
-
-Since then, there have been attempts to use deep learning to generate similar text output. Karparthy used a RNN structure to mimic a Shakespeare text, Wikipedia article, a C code, and even a LaTex file (http://karpathy.github.io/2015/05/21/rnn-effectiveness/). However, while they “look” like the original text, they do not sound like the author of the original document. A human language model is more complex to mimic than, per se, a code because context in human language is unbounded. 
-
-<h4>Who cares? If you are successful, what difference will it make?</h4>
-This is interesting for the following reasons. First, it not only reveals how a machine learn to speak but also provokes thinking about how we humans grasp the concept of language and speak. Second, from an user’s point of view, this presents an interesting perspective of how the user sounds. Finally, it metaphysically touches on the concept of "immortality". Currently, there exists voice question-and-answer system like Alexa or Watson that can reasonably carry out a conversation. However, they lack in an specific tone that usually defines a person. By combining human-level intellect with a specific person's tone, we could reasonably mimic the person, and this idea would be similar to "deep-copying" someone's mental features. 
+In this work, we explore the space of language modelling techniques and present an application of a recurrent neural network (RNN) based language model for generating text in the style of Donald Trump’s tweets. The current president of the United States Donald J. Trump is an ideal candidate to apply this approach because not only does he have a unique, colloquial tone that is both iconic but also there is a great wealth of data thanks to his frequent tweeting.
+ 
+This is interesting for the following reasons. First, it not only reveals how a machine learn to speak but also provokes thinking about how we humans grasp the concept of language and speak. Second, from an user’s point of view, this presents an interesting perspective of how the user sounds. Finally, it metaphysically touches on the concept of "immortality". Currently, there exists voice question-and-answer system like Alexa or Watson that can reasonably carry out a conversation. However, they lack in an specific tone that usually defines a person. By combining human-level intellect with a specific person's tone, we could reasonably mimic the person, and this idea would be like "deep-copying" someone's mental features.
 
 <br><br>
 <!-- Approach -->
 <h2>Approach</h2>
-<h4>What did you do exactly? How did you solve the problem? Why did you think it would be successful? Is anything new in your approach?</h4>
+Our dataset consists of tweets from Donald Trump’s official Twitter account @realDonaldTrump from 2013 to 2019, excluding retweets. Combined, the dataset is about 3MB. 
 
-We developed a char-level and word-level RNN that consist of LSTM or GRU layers as the basis of the model. We believe adding recurrence to the model via RNN will provide contextual information. Instead of generating the next token in a sequence based only on the previous token, recurrent models provide history s.t. training can pick up on larger patterns in the training data. 
+For the initial qualitative evaluation, we first built initial closed vocabulary language models using n-grams, char-level GRU-based RNN models, and word-level GRU-based RNN models. N-Gram is a very simple language model that approximates probability of a word given previous N words. N-gram, thus, relies on the Markov assumption, and ignores distant history in a sequence of words. Here, we used n = (2,3,4).
+ 
+Thus, we then trained a char-level and word-level GRU-based RNNs using PyTorch Framework. Adding recurrence in the model provides additional contextual information that allows picking up on a larger pattern in the training data. We attempt to model the probability distribution of the next character or word in the sequence given a sequence of previous characters or words, letting us generate the new text one character or word at a time. For both RNN models, we first encode the texts into feature representations (e.g. number of ASCII characters for char level), and run them through two layers of GRU. Finally, decode them into a vector output via a single densely connected output layer with softmax activation function (Figure C). We focused on tuning the following hyperparameters: number of epochs, hidden size of GRU, learning rate, length of training chunks, and batch size.
+ 
+From our initial set of models, we aimed to improve the quality of word-level dependencies between long running sequences of generated texts. Therefore, we modified the loss function for the word-level model. The loss is computed between multiple sets of sources and “lookahead” targets as opposed to single discrete sets of sources and targets. We hoped this would help retain contextual information and word-level dependencies while remaining computationally tractable. With this modified loss function, at training we look at multiple sources within a given sequence and define multiple targets so that long running dependencies are learned. We looked at the source code provided by Karparthy in his blog, and made modifications to use the PyTorch framework, and added custom loss function as described. Finally, for all of the models, we captured the loss history over the epochs, and generated a synthetic text based on random initial seeds of characters or words.
 
-The architecture used in the text generation model is a 3 layer GRU layers followed by a single densely connected output layer with a softmax activation function to provide a one-hot token encoding vector as an output. 
-
-Using char-level and word levle rnn to simulate the original text has been done before (e.g. Karparthy). In his approach, while it looks similar, content, in its core, is not comprehensible and poor in quality. In our project, we are trying to find ways to improve in this direction. 
 
 <br><br>
-<!-- Experiment Plan -->
-<h2>Experiments Plan</h2>
-<h4>What datasets are you using and what experiments will you carry out?</h4>
-We collected Trump’s tweets from 2013 to 2019. We excluded retweets so that data consists of tweets made by his account only. However, this doesn’t exclude the fact that someone else like his staffers may have used his account to tweet on his behalf. 
+<!-- Experiment and Results -->
+<h2>Experiments and Results</h2>
+For all of the experiments, we had to measure the success based on the loss history and qualitative evaluation of the generated tweets. On the trained models, we generated the tweets with string primer. With the basic n-grams, with n=2, the generated tweets were semi-coherent, while with n=4, the generated tweet were almost identical to the actual tweets. For RNN models, we had to cherry pick parts of the output that were interesting; this part was also observed and discussed in [1] and [2]. As shown by Figure 2, all of the models are converging, indicating the model is learning something. However, the char level models took about 700 iterations to converge, while word level models took about 10 iterations. This is as expected because word vector is bigger than the character vector. 
 
 
-<h4>How do you plan to measure success? </h4>
-As with all text generation model, it is difficult to measure the success of a model. Currently, we used the trained model to generate text output and manually check how “good” it is. We have to scrape by hand and cherry pick results for sentences that sound interesting. 
-
-We also ran a n-gram (not deep-learning) approach as a baseline to see if deep learning provides an improvement.
 <br><br>
 
 <!-- Experiment Plan -->
-<h2>Current Status</h2>
-<h4>Describe the list of tasks involved in your project per team member, and note what has already been accomplished and what is left to do.</h4>
-We collected all the data (25k tweets, or 3MB). For pre-processing, we removed all hyperlinks in the tweets. We coded up the RNN architecture using PyTorch, and actually trained the model with hyperparamter tuning. We each did about equal portion of work. Bryan mainly worked wiht the char-level rnn, and Nigel worked with the word-level rnn and n-gram. Overall, after hyper-parameter tuning on the model (number of layers, LSTM vs. GRU, epochs, learning rate), we came up with 300+ models and generated 50 tweets per each model. We manually skimmed through the outputs to evaluate the model and highlight any interesting bits and pieces.
+<h2>Conclusions</h2>
+Trump’s style is particularly unique because of his usage of hashtags, capitalizations, and punctuations. We noticed that there was a tradeoff between style and content similarity: char level model would better capture the style because it captures the granularity like the punctuation mark, but the word level model is better at capturing the diction and word choices. While the models are definitely learning, it is still limited. As shown by related works in the area, a much larger text dataset in the order of GBs will improve the performance. 
 
-For the evaluation, we thought of using perplexity, but it's only relevant in the context of word level rnn or n-gram because the idea hinges on tokenization. 
 
-From talking with Professor, our roadmap is to wrap up with the models, show the output and figures related to training, use perplexity to compare n-grams vs. word level rnn, and qualitatively compare the outputs from word level rnn, char level rnn, and n-grams. 
 <br><br>
 
-<!-- Help -->
-<h2>Help</h2>
-First, it’s hard to evaluate the goodness of the model because it’s not exactly a supervised learning. Accuracy doesn’t really apply in our problem domain. 
+<!-- Team Member Identification -->
+<h2>Team Member Identification</h2>
 
-Second, we thought 26k tweet was enough, but we only have 3MB of text data, and Professor told use in NLP, a lot more data (e.g. 100MB) is required. We thought about adding other Trump sources like his speech, but we originally wanted to capture the essense of his tone from his twitter, and there is no consolidated way to collect them unlike Twitter's API. 
 
-Also. for a given output, we had to cherry pick interesting bits and pieces because most of the output was gibberish. But this seems to be in common with other text generation model too. 
-
-Overall, it would be nice to improve the model. We looked at other models like Transformer but they seem to be used in a supervised learning context (e.g. English-German translation). And it's too complex for the limited data set we have. 
-
-Thus, we have 2 main questinons: how can we improve the model further, and how can we do a better job of evaluating the model? 
 <br><br>
 
-Here are text snippets we thought were interesting.
+<!-- References -->
+<h2>References</h2>
 
-A great time in Virginia. China has done good. If I went the NFL should never have been done in other countries 
-DUMB! WITCH HUNT will be coming back to the media in Charlottesville to the people of South KoreaAgain #ImWithYouThank you!
-@NewYorkPost @Yankees  So far the @oreillyfactor at 8/20 Minutes @Xean_fox has been waiting in Florida now
-Thank you very much. Good luck. @BarackObama can't stand in Barrack Obama.
-will be speaking at the officiational elements in Congressional Review On International
-Rosie O'Donnell who I look forward to working out the worst and spending our laws and our products coming amounts.
-#MakeAmericaGreatAgain #Trump2016Thank you at Trump Tower in NYC on NBC.
-Anthony Weiner's girlfriend will be producting up to sign the day plane with a pathetic service.
-No campaign means not respect to the people 
-The Democrats are a total joke.  
 
+<br><br>
 <!-- Main Results Figure --> 
 <!-- <div style="text-align: center;">
 <img style="height: 300px;" alt="" src="images/results.png">
