@@ -39,7 +39,12 @@ color: #FF9900;
 <!-- Goal -->
 <h2>Abstract</h2>
 
-We wanted to use deep learning to see if we can mimic someone's tone. In this paper, we try to mimic Trump from his tweets from 2013-2019 via char-level and word-level RNN. Compared to a n-gram, the output is qualitatively poor. 
+In this work, we utilize recurrent neural networks to train several generative language models using the corpus of Trump Tweets from 2013 to 2019.
+We qualitatively evaluate character level and word level neural models in addition to word-level ngrams.
+In addition we explore a new loss function by utilizing a look ahead mechanism during training time.
+Qualitatively, we find that char level models are best at capturing character level dependencies in Trump Tweets.
+We find that word level models are better at maintaining long term word level dependencies in terms of maintaining coherent tweets.
+
 <br><br>
 <!-- figure -->
 <h2>Teaser figure</h2>
@@ -77,8 +82,17 @@ From our initial set of models, we aimed to improve the quality of word-level de
 <br><br>
 <!-- Experiment and Results -->
 <h2>Experiments and Results</h2>
+
+
+<div style="text-align:center">
+<img src="images/SampleTweets.png" alt="Sample Tweets" height="512", width="512"></br>
+</div>
+
 For all of the experiments, we had to measure the success based on the loss history and qualitative evaluation of the generated tweets. On the trained models, we generated the tweets with string primer. With the basic n-grams, with n=2, the generated tweets were semi-coherent, while with n=4, the generated tweet were almost identical to the actual tweets. For RNN models, we had to cherry pick parts of the output that were interesting; this part was also observed and discussed in [1] and [2]. As shown by Figure 2, all of the models are converging, indicating the model is learning something. However, the char level models took about 700 iterations to converge, while word level models took about 10 iterations. This is as expected because word vector is bigger than the character vector. 
 
+<div style="text-align:center">
+<img src="images/LossHistory.png" alt="Loss History" height="512" width="512">
+</div>
 
 <br><br>
 
