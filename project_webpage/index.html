@@ -38,6 +38,8 @@ color: #FF9900;
 
 <!-- Goal -->
 <h2>Abstract</h2>
+This project employed various language models to capture a style of a well-known figure: Donald Trump. Trump's tweets from 2013to 2019 were trained via n-gram, char-level RNN architecture with GRU, and word-level RNN architecture with GRU. Finally, word-level RNN's loss function was modified to "look ahead" and better retain contextual information and word-level dependencies.
+
 
 In this work, we utilize recurrent neural networks to train several generative language models using the corpus of Trump Tweets from 2013 to 2019.
 We qualitatively evaluate character level and word level neural models in addition to word-level ngrams.
@@ -49,52 +51,63 @@ We find that word level models are better at maintaining long term word level de
 <!-- figure -->
 <h2>Teaser figure</h2>
 A figure that conveys the main idea behind the project or the main application being addressed. (This one is from <a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks">AlexNet</a>.)
+
 <br><br>
-<!-- Main Illustrative Figure --> 
-<div style="text-align: center;">
-<img style="height: 200px;" alt="" src="images/trumpTweet.png">
-</div>
-<br><br>
+
 <!-- Introduction -->
 <h2>Introduction / Background / Motivation</h2>
 Recurrent neural networks have been used successfully across a variety of applications ranging from image captioning, machine translation and text generation. In the realm of probabilistic classification, language modelling describes the problem of computing the probability of a sequence of character or word tokens given a discrete vocabulary. This problem has applications across machine translation, speech recognition, summarization and dialogue systems.
- 
+<br><br>
 Before deep learning, text generation was done using probabilistic Markov Chain Monte Carlo and bag of words model in closed vocabulary settings. However, some of the limits with respect involve maintaining contextual information for long sequences of generated text as well as keeping word dependencies such that generated text remains coherent.
-
+<br><br>
 There have been attempts to use deep learning to generate similar text output. Karparthy used a RNN structure to mimic corpus like Shakespeare text, Wikipedia article, a C code, and even a LaTex file [1]. However, while they “look” like the original text, they do not sound like the author of the original document. In “Applying Artistic Style Transfer to Natural Language,” [2] Edirisooriya and Tenney embed IDs and apply RNNs of gated recurrent unit (GRU) to identify authors of a given text based on style. They try to separate the loss function in terms of content and style. However, the outcome of their experiments showed limited results, and this required parallel sets of text data. In Feb 2019, researchers from OpenAI trained a large-scale unsupervised language model with 1.5 billion parameters trained on 40GB of Internet text. that creates coherent paragraphs of text based on a human-input text. [3] While the generated text was remarkably relevant to the input text in terms of content, it lacks similarity in style. 
+<div style="text-align: center;">
+<img style="height: 200px;" alt="" src="images/GRU.png">
+<h5>Figure A: Basic architecture of GRU cell</h5>
+</div>
 
 In this work, we explore the space of language modelling techniques and present an application of a recurrent neural network (RNN) based language model for generating text in the style of Donald Trump’s tweets. The current president of the United States Donald J. Trump is an ideal candidate to apply this approach because not only does he have a unique, colloquial tone that is both iconic but also there is a great wealth of data thanks to his frequent tweeting.
- 
+<br><br>
 This is interesting for the following reasons. First, it not only reveals how a machine learn to speak but also provokes thinking about how we humans grasp the concept of language and speak. Second, from an user’s point of view, this presents an interesting perspective of how the user sounds. Finally, it metaphysically touches on the concept of "immortality". Currently, there exists voice question-and-answer system like Alexa or Watson that can reasonably carry out a conversation. However, they lack in an specific tone that usually defines a person. By combining human-level intellect with a specific person's tone, we could reasonably mimic the person, and this idea would be like "deep-copying" someone's mental features.
-
 <br><br>
 <!-- Approach -->
 <h2>Approach</h2>
-Our dataset consists of tweets from Donald Trump’s official Twitter account @realDonaldTrump from 2013 to 2019, excluding retweets. Combined, the dataset is about 3MB. 
+Our dataset consists of tweets from Donald Trump’s official Twitter account <a href="https://twitter.com/realDonaldTrump">@realDonaldTrump</a> from 2013 to 2019, excluding retweets. Combined, the dataset is about 3MB.
+
+<br><br>
+<!-- Main Illustrative Figure -->
+<div style="text-align: center;">
+<img style="height: 200px;" alt="" src="images/trumpTweet.png">
+<h5>Exhibit A: Examples of @realDonaldTrump’s tweets</h5>
+</div>
 
 For the initial qualitative evaluation, we first built initial closed vocabulary language models using n-grams, char-level GRU-based RNN models, and word-level GRU-based RNN models. N-Gram is a very simple language model that approximates probability of a word given previous N words. N-gram, thus, relies on the Markov assumption, and ignores distant history in a sequence of words. Here, we used n = (2,3,4).
- 
-Thus, we then trained a char-level and word-level GRU-based RNNs using PyTorch Framework. Adding recurrence in the model provides additional contextual information that allows picking up on a larger pattern in the training data. We attempt to model the probability distribution of the next character or word in the sequence given a sequence of previous characters or words, letting us generate the new text one character or word at a time. For both RNN models, we first encode the texts into feature representations (e.g. number of ASCII characters for char level), and run them through two layers of GRU. Finally, decode them into a vector output via a single densely connected output layer with softmax activation function (Figure C). We focused on tuning the following hyperparameters: number of epochs, hidden size of GRU, learning rate, length of training chunks, and batch size.
- 
+ <br><br>
+Thus, we then trained a char-level and word-level GRU-based RNNs using PyTorch Framework. Adding recurrence in the model provides additional contextual information that allows picking up on a larger pattern in the training data. We attempt to model the probability distribution of the next character or word in the sequence given a sequence of previous characters or words, letting us generate the new text one character or word at a time. For both RNN models, we first encode the texts into feature representations (e.g. number of ASCII characters for char level), and run them through two layers of GRU. Finally, decode them into a vector output via a single densely connected output layer with softmax activation function (Figure B). We focused on tuning the following hyperparameters: number of epochs, hidden size of GRU, learning rate, length of training chunks, and batch size.
+<div style="text-align: center;">
+<img style="height: 200px;" alt="" src="images/RNNArchitecture.png">
+<h5>Figure A: Sample of Overall RNN Architecture for Char and Word Level Model</h5>
+</div>
 From our initial set of models, we aimed to improve the quality of word-level dependencies between long running sequences of generated texts. Therefore, we modified the loss function for the word-level model. The loss is computed between multiple sets of sources and “lookahead” targets as opposed to single discrete sets of sources and targets. We hoped this would help retain contextual information and word-level dependencies while remaining computationally tractable. With this modified loss function, at training we look at multiple sources within a given sequence and define multiple targets so that long running dependencies are learned. We looked at the source code provided by Karparthy in his blog, and made modifications to use the PyTorch framework, and added custom loss function as described. Finally, for all of the models, we captured the loss history over the epochs, and generated a synthetic text based on random initial seeds of characters or words.
-
 
 <br><br>
 <!-- Experiment and Results -->
 <h2>Experiments and Results</h2>
 
-
-<div style="text-align:center">
-<img src="images/SampleTweets.png" alt="Sample Tweets" height="512", width="512"></br>
-</div>
-
-For all of the experiments, we had to measure the success based on the loss history and qualitative evaluation of the generated tweets. On the trained models, we generated the tweets with string primer. With the basic n-grams, with n=2, the generated tweets were semi-coherent, while with n=4, the generated tweet were almost identical to the actual tweets. For RNN models, we had to cherry pick parts of the output that were interesting; this part was also observed and discussed in [1] and [2]. As shown by Figure 2, all of the models are converging, indicating the model is learning something. However, the char level models took about 700 iterations to converge, while word level models took about 10 iterations. This is as expected because word vector is bigger than the character vector. 
-
-<div style="text-align:center">
-<img src="images/LossHistory.png" alt="Loss History" height="512" width="512">
-</div>
-
 <br><br>
+<!-- Main Illustrative Figure -->
+<div style="text-align: center;">
+<img style="height: 200px;" alt="" src="images/SampleTweets.png">
+<h5>Figure B: Generated Text Output </h5>
+</div>
+
+For all of the experiments, we had to measure the success based on the loss history and qualitative evaluation of the generated tweets. On the trained models, we generated the tweets with string primer. With the basic n-grams, with n=2, the generated tweets were semi-coherent, while with n=4, the generated tweet were almost identical to the actual tweets. For RNN models, we had to cherry pick parts of the output that were interesting; this part was also observed and discussed in [1] and [2]. As shown by Figure 2, all of the models are converging, indicating the model is learning something. However, the char level models took about 700 iterations to converge, while word level models took about 10 iterations. This is as expected because word vector is bigger than the character vector.
+<div style="text-align: center;">
+<img style="height: 200px;" alt="" src="images/LossHistory.png">
+<h5>Figure C: Loss History of Char-Level, Word-Level, and modified Loss Function Word-Level RNN </h5>
+</div>
+
+
 
 <!-- Experiment Plan -->
 <h2>Conclusions</h2>
@@ -111,14 +124,15 @@ Trump’s style is particularly unique because of his usage of hashtags, capital
 
 <!-- References -->
 <h2>References</h2>
+[1] http://karpathy.github.io/2015/05/21/rnn-effectiveness.
 
+[2] M. T. Thaminda Edirisooriya, "http://web.stanford.edu/class/cs224s/reports/Thaminda_Edirisooriya.pdf".
 
+[3] J. W. R. C. D. L. D. A. I. S. Alec Radford, https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf.
+
+[4] https://arxiv.org/pdf/1705.09655.pdf.
 <br><br>
-<!-- Main Results Figure --> 
-<!-- <div style="text-align: center;">
-<img style="height: 300px;" alt="" src="images/results.png">
-</div>
-<br><br> -->
+
 
   <hr>
   <footer> 
