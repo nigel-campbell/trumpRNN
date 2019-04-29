@@ -81,7 +81,9 @@ Thus, we then trained a char-level and word-level GRU-based RNNs using PyTorch F
 <img style="height: 200px;" alt="" src="images/RNNArchitecture.png">
 <h5>Figure A: Sample of Overall RNN Architecture for Char and Word Level Model</h5>
 </div>
-From our initial set of models, we aimed to improve the quality of word-level dependencies between long running sequences of generated texts. Therefore, we modified the loss function for the word-level model. The loss is computed between multiple sets of sources and “lookahead” targets as opposed to single discrete sets of sources and targets. We hoped this would help retain contextual information and word-level dependencies while remaining computationally tractable. With this modified loss function, at training we look at multiple sources within a given sequence and define multiple targets so that long running dependencies are learned. We looked at the source code provided by Karparthy in his blog, and made modifications to use the PyTorch framework, and added custom loss function as described. Finally, for all of the models, we captured the loss history over the epochs, and generated a synthetic text based on random initial seeds of characters or words.
+From our initial set of models, we aimed to improve the quality of word-level dependencies between long running sequences of generated texts. We anticipated given the small dataset and rather simple nature of the architecture, generated output may not be qualitatively good. From the initial trial runs, we saw that trained models mostly generated gibberish, and we had to cherry pick snip bits of sensible texts. 
+ <br><br>
+Therefore, we modified the loss function for the word-level model. The loss is computed between multiple sets of sources and “lookahead” targets as opposed to single discrete sets of sources and targets. We hoped this would help retain contextual information and word-level dependencies while remaining computationally tractable. With this modified loss function, at training we look at multiple sources within a given sequence and define multiple targets so that long running dependencies are learned. We looked at the source code provided by Karparthy in his blog, and made modifications to use the PyTorch framework, and added custom loss function as described. Finally, for all of the models, we captured the loss history over the epochs, and generated a synthetic text based on random initial seeds of characters or words.
 
 <br><br>
 <!-- Experiment and Results -->
@@ -90,7 +92,7 @@ From our initial set of models, we aimed to improve the quality of word-level de
 <br><br>
 <!-- Main Illustrative Figure -->
 <div style="text-align: center;">
-<img style="height: 200px;" alt="" src="images/SampleTweets.png">
+<img style="height: 800px;" alt="" src="images/SampleTweets.png">
 <h5>Figure B: Generated Text Output </h5>
 </div>
 
@@ -99,7 +101,6 @@ For all of the experiments, we had to measure the success based on the loss hist
 <img style="height: 200px;" alt="" src="images/LossHistory.png">
 <h5>Figure C: Loss History of Char-Level, Word-Level, and modified Loss Function Word-Level RNN </h5>
 </div>
-
 
 
 <!-- Experiment Plan -->
@@ -111,7 +112,21 @@ Trump’s style is particularly unique because of his usage of hashtags, capital
 
 <!-- Team Member Identification -->
 <h2>Team Member Identification</h2>
-
+<table style="width:100%">
+  <tr>
+    <th>Name</th>
+    <th>Description of Work</th>
+  </tr>
+  <tr>
+    <td>Bryan Baek</td>
+    <td>Gathered the data, implemented the char level RNN with GRU models, 
+    trained and monitored the optimization addressing any issues such as overfitting, tuned hyper-parameters, wrote the report</td>
+  </tr>
+  <tr>
+    <td>Nigel Campbell</td>
+    <td>Implemented the word level RNN with GRU models and n-gram models, implemented new loss function, designed and implemented attentional mechanism for approach.</td>
+  </tr>
+</table>
 
 <br><br>
 
