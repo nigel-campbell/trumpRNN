@@ -102,6 +102,15 @@ For all of the experiments, we had to measure the success based on the loss hist
 <h2>Conclusions</h2>
 Trump’s style is particularly unique because of his usage of hashtags, capitalizations, and punctuations. We noticed that there was a tradeoff between style and content similarity: char level model would better capture the style because it captures the granularity like the punctuation mark, but the word level model is better at capturing the diction and word choices. While the models are definitely learning, it is still limited. As shown by related works in the area, a much larger text dataset in the order of GBs will improve the performance. 
 
+<br><br>
+
+<h2>Codebases</h2>
+
+
+<b>Word level, character-level, and ngram model codebase</b>: https://github.com/seungkwanbaek/trumpRNN
+<br>
+<b>Multi-Loss, Look-Ahead Mechanism model codebase</b>: https://github.com/nigel-campbell/language-modelling
+
 
 <br><br>
 
@@ -119,7 +128,7 @@ Trump’s style is particularly unique because of his usage of hashtags, capital
   </tr>
   <tr>
     <td>Nigel Campbell</td>
-    <td>Implemented the word level RNN with GRU models and n-gram models, implemented new loss function, designed and implemented attentional mechanism for approach.</td>
+    <td>Implemented the word level RNN with GRU models and n-gram models, implemented new look-ahead, multi-loss attention mechanism.</td>
   </tr>
 </table>
 
